@@ -1,0 +1,50 @@
+KW_CHAR         char
+TK_IDENTIFIER   c
+UNKNOWN_TOKEN   c
+LIT_CHAR        a
+UNKNOWN_TOKEN   a
+KW_INT          int
+TK_IDENTIFIER   number
+UNKNOWN_TOKEN   number
+LIT_INT         123
+KW_REAL         real
+TK_IDENTIFIER   decimal
+UNKNOWN_TOKEN   decimal
+LIT_REAL        12.34
+KW_BOOL         bool
+TK_IDENTIFIER   isTrue
+UNKNOWN_TOKEN   isTrue
+UNKNOWN_TOKEN   true
+KW_IF           if
+UNKNOWN_TOKEN   if
+TK_IDENTIFIER   number
+UNKNOWN_TOKEN   number
+LIT_INT         10
+UNKNOWN_TOKEN   10
+KW_OUTPUT       output
+LIT_STRING      Number is greater than 10!
+UNKNOWN_TOKEN   Number is greater than 10!
+UNKNOWN_TOKEN   Number is greater than 10!
+KW_ELSE         else
+UNKNOWN_TOKEN   else
+KW_OUTPUT       output
+LIT_STRING      Number is not greater than 10!
+UNKNOWN_TOKEN   Number is not greater than 10!
+UNKNOWN_TOKEN   Number is not greater than 10!
+TOKEN_ERROR     Number is not greater than 10!
+TOKEN_ERROR     Number is not greater than 10!
+KW_LOOP         loop
+UNKNOWN_TOKEN   loop
+KW_INT          int
+TK_IDENTIFIER   i
+LIT_INT         0
+TK_IDENTIFIER   i
+LIT_INT         10
+TK_IDENTIFIER   i
+UNKNOWN_TOKEN   i
+UNKNOWN_TOKEN   i
+UNKNOWN_TOKEN   i
+KW_OUTPUT       output
+TK_IDENTIFIER   i
+UNKNOWN_TOKEN   i
+UNKNOWN_TOKEN   i
