@@ -371,7 +371,7 @@ int analex(FILE *input, char *lexema) {
         return LIT_STRING;
     }
 
-    // Ignorando comentários
+    // Ignorando comentário
     if (ch == '\\' && ch_proximo == '\\') {
         while (ch != '\n') {
             ch = prox_char(input);
