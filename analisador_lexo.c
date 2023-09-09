@@ -367,7 +367,7 @@ int analex(FILE *input, char *lexema) {
         lexema[idx] = '\0';
         
         
-        //ungetc(ch, input);
+        ///ungetc(ch, input);
         return LIT_STRING;
     }
 
