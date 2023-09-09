@@ -1,8 +1,7 @@
-KW_CHAR         char
+LIT_CHAR        char
 TK_IDENTIFIER   c
 OPERATOR_ATRIB  =
-LIT_CHAR        a
-LIT_CHAR        ;
+LIT_STRING      a
 KW_INT          int
 TK_IDENTIFIER   number
 OPERATOR_ATRIB  =
@@ -15,4 +14,5 @@ KW_BOOL         bool
 TK_IDENTIFIER   isTrue
 OPERATOR_ATRIB  =
 TK_BOOL_TRUE    true
+SG_SEMICOLON    ;
 TOKEN_EOF       

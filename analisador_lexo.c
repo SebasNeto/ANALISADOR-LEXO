@@ -206,7 +206,16 @@ int analex(FILE *input, char *lexema) {
         
 
         // Verifique as palavras reservadas
-        if (strcmp(lexema, "char") == 0) return KW_CHAR;
+        if (strcmp(lexema, "char") == 0){
+            lexema[0] = 'c';
+            lexema[1] = 'h';
+            lexema[2] = 'a';
+            lexema[3] = 'r';
+            lexema[4] = '\0';
+            //prox_char(input);
+            return LIT_CHAR;
+            
+        }
         if (strcmp(lexema, "int") == 0) return KW_INT;
         if (strcmp(lexema, "real") == 0) return KW_REAL;
         if (strcmp(lexema, "bool") == 0) return KW_BOOL;
@@ -218,7 +227,7 @@ int analex(FILE *input, char *lexema) {
         if (strcmp(lexema, "output") == 0) return KW_OUTPUT;
         if (strcmp(lexema, "return") == 0) return KW_RETURN;
         if (strcmp(lexema, "true") == 0){
-            //ungetc(ch,input);
+            ungetc(ch,input);
             
             // prox_char(input);
             // lexema[0] = 't';
@@ -233,7 +242,8 @@ int analex(FILE *input, char *lexema) {
             //ungetc(ch,input);
             //prox_char(input);
             return TK_BOOL_FALSE;
-        } 
+        }
+
 
         // Se não for uma palavra reservada, é um identificador - variaveis, vetores
         Symbol* s = pesquisaLexema(lexema);
@@ -246,7 +256,7 @@ int analex(FILE *input, char *lexema) {
     // Reconhecendo caracteres especiais e operadores compostos
 
     // operadores compostos
-    if (strchr("< > = ! ", ch)) {
+    if (strchr("< > = !  ; ", ch)) {
         ch_proximo = prox_char(input);
         ungetc(ch_proximo, input); // coloca o caractere de volta no stream
 
@@ -287,13 +297,30 @@ int analex(FILE *input, char *lexema) {
             lexema[1] = '\0';
             return OPERATOR_ATRIB;
         }else{
-            return ch;
+            //return ch;
         }
 
     }
 
     // caracteres especiais
     if (strchr(", ; () [] {} + - * / %  & | ~", ch)) {
+        //ch_proximo = prox_char(input);
+        //ungetc(ch_proximo, input);
+
+        if(ch == ';'){
+            lexema[0] = ';';
+            lexema[1] = '\0';
+            prox_char(input);
+            return SG_SEMICOLON;
+        }
+
+        lexema[0] = ch;
+        lexema[1]='\0';
+
+
+
+
+
         //ch_proximo = prox_char(input);
         //ungetc(ch_proximo, input); // coloca o caractere de volta no stream
 
@@ -336,9 +363,11 @@ int analex(FILE *input, char *lexema) {
             lexema[idx++] = ch;
             ch = prox_char(input);
         }
-        lexema[idx] = '\0';
         ch = prox_char(input);
-        ungetc(ch, input);
+        lexema[idx] = '\0';
+        
+        
+        //ungetc(ch, input);
         return LIT_STRING;
     }
 
@@ -379,7 +408,7 @@ int main(int argc, char *argv[]) {
 
 
     FILE *input = fopen(argv[1], "r");;
-    FILE *output = fopen("output13.txt", "w");
+    FILE *output = fopen("output15.txt", "w");
 
     if (input == NULL) {
         perror("Erro ao abrir o arquivo");
