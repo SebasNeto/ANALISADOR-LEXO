@@ -26,13 +26,14 @@
 #define KW_RETURN         268
 
 ////tipos de operadores do analisador 
-#define OPERATOR_LE       270
-#define OPERATOR_GE       271
-#define OPERATOR_EQ       272
-#define OPERATOR_DIF      273
-#define OPERATOR_ATRIB    274
-#define OPERATOR_GT       275
-#define OPERATOR_LT       276
+#define OPERATOR_LE       270 // <=
+#define OPERATOR_GE       271 // >=
+#define OPERATOR_EQ       272 // ==
+#define OPERATOR_DIF      273 // !=
+
+#define OPERATOR_ATRIB    274 // = 
+#define OPERATOR_GT       275 // >
+#define OPERATOR_LT       276 // <
 
 ////tipos boleanos do analisador 
 #define TK_BOOL_TRUE      277
@@ -42,10 +43,10 @@
 #define TK_IDENTIFIER     280
 
 //tipos de literais do analisador 
-#define LIT_INT           281
-#define LIT_REAL          282
-#define LIT_CHAR          285
-#define LIT_STRING        286
+#define LIT_INT           281 // "10", "1"
+#define LIT_REAL          282 // "2.0"
+#define LIT_CHAR          285 // 'a', 'X'
+#define LIT_STRING        286 // "nome", "mensagem"
 
 //tipos de simbolos do analisador 
 #define SG_SEMICOLON      290 //;
@@ -58,7 +59,7 @@
 #define TOKEN_ERROR       390
 
 //fim de arquivo
-#define TOKEN_EOF -1
+#define TOKEN_EOF         392
 
 /* END OF FILE */
 

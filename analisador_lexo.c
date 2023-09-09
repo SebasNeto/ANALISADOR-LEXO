@@ -14,8 +14,8 @@
 #include "string.h"
 #include "ctype.h"
 #include "tokens.h"
-#include <time.h>
 #include <unistd.h>
+#include "stdbool.h"
 
 ///////////////////////////////////// DEFINIÇÕES TOKENS ///////////////////////////////////////////
 
@@ -27,32 +27,31 @@
 
 int linhaCorrente = 1; //rastrear linha atual
 int running = 1; // Variável global para rastrear se a análise está em execução
-
 ///////////////////////////////////// ESTRUTURA TABELA DE SIMBOLOS /////////////////////////////////
 
 typedef struct Symbol {
-    char *lexema;
+    char *lexeme;
     int token;
     struct Symbol *proximo; 
 } Symbol;
 
 Symbol *simboloTabela[HASH_SIZE];
 
-///////////////////////////////////// ESTRUTURA TABELA HASH ///////////////////////////////////Q
+///////////////////////////////////// ESTRTURA TABELA HASH ///////////////////////////////////Q
 
 unsigned int hash(char *str) {
     unsigned int hash = 0;
     while (*str) {
-        hash = (hash * 31) + *str++; //evitar colisões 
+        hash = (hash * 31) + *str++;
     }
-    return hash % HASH_SIZE; //dentro do limite da tabela 
+    return hash % HASH_SIZE;
 }
 
-Symbol* pesquisaLexema(char *lexema) {
-    unsigned int index = hash(lexema);
+Symbol* pesquisaLexema(char *lexeme) {
+    unsigned int index = hash(lexeme);
     Symbol *node = simboloTabela[index];
     while (node) {
-        if (strcmp(node->lexema, lexema) == 0) {
+        if (strcmp(node->lexeme, lexeme) == 0) {
             return node;
         }
         node = node->proximo;
@@ -60,18 +59,14 @@ Symbol* pesquisaLexema(char *lexema) {
     return NULL; // Não encontrado
 }
 
-Symbol* insert(char *lexema, int token) { //lexema (inserir) -> token (associado)
-
-    unsigned int index = hash(lexema);//posição do lexema na tabela
-
+Symbol* insert(char *lexeme, int token) {
+    unsigned int index = hash(lexeme);
     Symbol *novoNo = malloc(sizeof(Symbol));
-    novoNo->lexema = strdup(lexema); // Faz uma cópia do lexema
-
+    novoNo->lexeme = strdup(lexeme); // Faz uma cópia do lexema
     novoNo->token = token;
-
-    novoNo->proximo = simboloTabela[index]; //verificando se o novo lexema está na tebala
-
+    novoNo->proximo = simboloTabela[index];
     simboloTabela[index] = novoNo; // Insere no início da lista para lidar com colisões
+    printf("O lexema inserido foi: %s \n", lexeme);
     return novoNo;
 }
 ///////////////////////////////////////////////////////////////////////////q
@@ -87,12 +82,30 @@ int isRunning(void) {
 ///////////////////////////////////// DECLARAÇÕES DE FUNÇÕES //////////////////////////////////////
 
 char prox_char(FILE *file) {
-    char ch = fgetc(file); //lê o proximo caractere 
+
+    char ch = fgetc(file);
+
+    if(ch == EOF){
+        return ch;
+    }
+
+    if (ch == '\r') {
+        ch = fgetc(file);
+        if (ch != '\n') {
+            fprintf(stderr, "Erro: encontrado '\r' sem '\n' em seguida na linha %d.\n", linhaCorrente);
+        }
+    }
+
     if (ch == '\n') {
         linhaCorrente++;
     }
+
+    printf("Linha atual: %d - Caractere atual %c \n\n", linhaCorrente, ch);
+    //printf("Caractere atual: %c \n", ch);
+
     return ch;
 }
+
 
 // void grava_token(int token, char *lexema, FILE *output) {
 //     fprintf(output, "Token: %d, Lexema: %s\n", token, lexema);
@@ -103,9 +116,9 @@ char prox_char(FILE *file) {
 //     exit(1);
 // }
 
-//token (repesentação númerica) -> string (representação string)
 const char* token_to_string(int token) {
     switch (token) {
+
         case TK_IDENTIFIER: return "TK_IDENTIFIER";
         case OPERATOR_ATRIB: return "OPERATOR_ATRIB";
         case KW_CHAR: return "KW_CHAR";
@@ -133,15 +146,16 @@ const char* token_to_string(int token) {
         case TK_BOOL_TRUE: return "TK_BOOL_TRUE";
         case TK_BOOL_FALSE: return "TK_BOOL_FALSE";
         case TOKEN_ERROR: return "TOKEN_ERROR";
-
-        //tratar nos caracteres especiais 
-        case OPEN_PAREN : return "OPEN_PAREN";
-        case CLOSE_PAREN : return "CLOSE_PAREN";
+        case OPEN_PAREN: return "OPEN_PAREN";
+        case CLOSE_PAREN: return "CLOSE_PAREN";
         case OPEN_BRACE : return "OPEN_BRACE";
         case CLOSE_BRACE : return "CLOSE_BRACE";
+        case TOKEN_EOF : return "TOKEN_EOF";
+        
 
-
-        default: return "UNKNOWN_TOKEN";
+        default: 
+        printf("Erro: token não reconhecido com valor: %d\n", token);
+        return "UNKNOWN_TOKEN";
     }
 }
 
@@ -156,28 +170,31 @@ void erro(char *message) {
 
 
 int analex(FILE *input, char *lexema) {
+
     char ch = prox_char(input);
-    printf("--------------\n");
+    printf(" \n--------------\n");
 	printf("Entrou antes do ispace\n");
+    char ch_proximo;
+    int idx = 0;
+    
+    //ungetc(ch, input);
+    printf("Valor do caractere: %c\n", ch);
 
     while (isspace(ch)) {
         ch = prox_char(input);  
     }
 
-    char ch_proximo = fgetc(input);
+    //char ch_proximo = fgetc(input); 
+    ch_proximo = prox_char(input);
+    ungetc(ch_proximo, input);
 
     printf("pegou o proximo %c\n", ch_proximo);
-    ungetc(ch, input);
-    ungetc(ch_proximo, input);
-    ungetc(ch_proximo, input);
-    printf("Valor do caractere: %c\n", ch);
-    printf("|%s| ", lexema); 
-    int idx = 0;
 
-    if (isspace(ch)) {
-        return analex(input, lexema);
-    }
+    printf("Valor dos lexemas: |%s| \n", lexema); 
 
+    
+
+    //TOKENS
     // Reconhecendo palavras reservadas e identificadores
     if (isalpha(ch) || ch == '_') {
         while (isalpha(ch) || ch == '_') {
@@ -185,6 +202,8 @@ int analex(FILE *input, char *lexema) {
             ch = prox_char(input);
         }
         lexema[idx] = '\0';
+        //ungetc(ch, input);
+        
 
         // Verifique as palavras reservadas
         if (strcmp(lexema, "char") == 0) return KW_CHAR;
@@ -198,10 +217,25 @@ int analex(FILE *input, char *lexema) {
         if (strcmp(lexema, "input") == 0) return KW_INPUT;
         if (strcmp(lexema, "output") == 0) return KW_OUTPUT;
         if (strcmp(lexema, "return") == 0) return KW_RETURN;
-        if (strcmp(lexema, "true") == 0) return TK_BOOL_TRUE; 
-        if (strcmp(lexema, "false") == 0) return TK_BOOL_FALSE;
+        if (strcmp(lexema, "true") == 0){
+            //ungetc(ch,input);
+            
+            // prox_char(input);
+            // lexema[0] = 't';
+            // lexema[1] = 'r';
+            // lexema[2] = 'u';
+            // lexema[3] = 'e';
+            // lexema[4] = '\0';
+            //prox_char(input);
+            return TK_BOOL_TRUE;
+        } 
+        if (strcmp(lexema, "false") == 0){
+            //ungetc(ch,input);
+            //prox_char(input);
+            return TK_BOOL_FALSE;
+        } 
 
-        // Se não for uma palavra reservada, é um identificador
+        // Se não for uma palavra reservada, é um identificador - variaveis, vetores
         Symbol* s = pesquisaLexema(lexema);
         if (!s) {
             s = insert(lexema, TK_IDENTIFIER);
@@ -210,41 +244,68 @@ int analex(FILE *input, char *lexema) {
     }
 
     // Reconhecendo caracteres especiais e operadores compostos
-    if (strchr(",;()[]{}=+-*/%&|~>", ch)) {
+
+    // operadores compostos
+    if (strchr("< > = ! ", ch)) {
         ch_proximo = prox_char(input);
         ungetc(ch_proximo, input); // coloca o caractere de volta no stream
 
         if (ch == '<' && ch_proximo == '=') {
+            lexema[0] = '<';
+            lexema[1] = '=' ;
+            lexema[2] = '\0';
             prox_char(input);
             return OPERATOR_LE;
         } else if (ch == '>' && ch_proximo == '=') {
+            lexema[0] = '>';
+            lexema[1] = '=' ;
+            lexema[2] = '\0';
             prox_char(input);
             return OPERATOR_GE;
         } else if (ch == '=' && ch_proximo == '=') {
+            lexema[0] = '=';
+            lexema[1] = '=';
+            lexema[2] = '\0';
             prox_char(input);
             return OPERATOR_EQ;
         } else if (ch == '!' && ch_proximo == '=') {
+            lexema[0] = '!';
+            lexema[1] = '=';
+            lexema[2] = '\0';
             prox_char(input);
             return OPERATOR_DIF;
-        }else if(ch == '>'){
+        }else if (ch == '>'){
+            lexema[0] = '>';
+            lexema[1] = '\0';
             return OPERATOR_GT;
         }else if(ch == '<'){
+            lexema[0] = '<';
+            lexema[1] = '\0';
             return OPERATOR_LT;
         }else if(ch == '='){
+            lexema[0] = '=';
+            lexema[1] = '\0';
             return OPERATOR_ATRIB;
-        }else {
-            return ch; // Retorne o caractere ASCII para caracteres simples
+        }else{
+            return ch;
         }
+
+    }
+
+    // caracteres especiais
+    if (strchr(", ; () [] {} + - * / %  & | ~", ch)) {
+        //ch_proximo = prox_char(input);
+        //ungetc(ch_proximo, input); // coloca o caractere de volta no stream
+
+        return ch;
     }
 
     // Reconhecendo literais
-
     if (isdigit(ch)) {
         while (isdigit(ch)) {
             lexema[idx++] = ch;
             ch = prox_char(input);
         }
-        
         if (ch == '.') {
             lexema[idx++] = ch;
             ch = prox_char(input);
@@ -259,11 +320,13 @@ int analex(FILE *input, char *lexema) {
         return LIT_INT;
     }
 
+    //comentários
     if (ch == '\'') {
         ch = prox_char(input);
         lexema[idx++] = ch;
-        lexema[idx] = '\0';
         ch = prox_char(input); // pegue o apóstrofo de fechamento
+        lexema[idx] = '\0';
+        ungetc(ch, input); 
         return LIT_CHAR;
     }
 
@@ -274,6 +337,8 @@ int analex(FILE *input, char *lexema) {
             ch = prox_char(input);
         }
         lexema[idx] = '\0';
+        ch = prox_char(input);
+        ungetc(ch, input);
         return LIT_STRING;
     }
 
@@ -296,12 +361,14 @@ int analex(FILE *input, char *lexema) {
         return analex(input, lexema); 
     }
 
-    if (feof(input)) {
+    if (ch == EOF) {
+        lexema[0] = '\0';
         running = 0;
         return TOKEN_EOF; 
     }
 
-	//idx++;
+    lexema[0] = ch;
+    lexema[1] = '\0';
     fprintf(stderr, "Erro na linha %d: Caractere não reconhecido: %c \n", linhaCorrente, ch);
     return TOKEN_ERROR; // Token de erro
 }
@@ -310,13 +377,9 @@ int analex(FILE *input, char *lexema) {
 
 int main(int argc, char *argv[]) {
 
-    // if (argc < 2) {
-    //     printf("Uso: %s <nome do arquivo de entrada>\n", argv[0]);
-    //     return 1;
-    // }
 
     FILE *input = fopen(argv[1], "r");;
-    FILE *output = fopen("output10.txt", "w");
+    FILE *output = fopen("output13.txt", "w");
 
     if (input == NULL) {
         perror("Erro ao abrir o arquivo");
@@ -336,7 +399,7 @@ int main(int argc, char *argv[]) {
         grava_token(token, lexema, output);
         printf("Token: %d\n", token);
         printf("Valor do lexema: %s\n", lexema);
-        sleep(1);
+        //sleep(1);
     } while (token != TOKEN_EOF);
 
     printf(" \n\n CÓDIGO COMPILADO COM SUCESSO \n \n");
