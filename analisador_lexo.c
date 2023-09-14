@@ -69,6 +69,13 @@ Symbol* insert(char *lexeme, int token) {
     printf("O lexema inserido foi: %s \n", lexeme);
     return novoNo;
 }
+
+void initSimboloTabela() {
+    for (int i = 0; i < HASH_SIZE; i++) {
+        simboloTabela[i] = NULL;
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////q
 
 int getLineNumber(void) {
@@ -78,6 +85,8 @@ int getLineNumber(void) {
 int isRunning(void) {
     return running;
 }
+
+
 
 ///////////////////////////////////// DECLARAÇÕES DE FUNÇÕES //////////////////////////////////////
 
@@ -174,37 +183,9 @@ void erro(char *message) {
     exit(1);
 }
 
+int reconheceIdentificadoresORReservadas(char ch, FILE *input, char *lexema){
 
-
-int analex(FILE *input, char *lexema) {
-
-    char ch = prox_char(input);
-    
-
-    printf(" \n--------------\n");
-
-    //char ch_proximo;
     int idx = 0;
-    
-    //ungetc(ch, input);
-    printf("Valor do caractere analex: %c\n", ch);
-
-    while (isspace(ch)) {
-        ch = prox_char(input);  
-    }
-
-    //char ch_proximo = fgetc(input); 
-    char ch_proximo = prox_char(input);
-    printf("Valor do próximo caractere analex: %c \n", ch_proximo);
-    ungetc(ch_proximo, input);
-    //printf("o proximo foi colocado no buffer: %c \n", ch_proximo);
-  
-    //printf("Valor dos lexemas: |%s| \n", lexema); 
-
-    
-
-    //TOKENS
-    // Reconhecendo palavras reservadas e identificadores
     if (isalpha(ch) || ch == '_') {
         while (isalpha(ch) || ch == '_') {
             lexema[idx++] = ch;
@@ -264,14 +245,14 @@ int analex(FILE *input, char *lexema) {
         }
         return s->token;
     }
+}
 
-    // Reconhecendo caracteres especiais e operadores compostos
-
-    // operadores compostos
+int reconheceOperadoresCompostos(char ch, FILE *input, char *lexema){
+    int idx = 0;
+    char ch_proximo = prox_char(input);
     if (strchr("< > = !  ; ", ch)) {
-        ch_proximo = prox_char(input);
-        ungetc(ch_proximo, input); // coloca o caractere de volta no stream
-
+        //ch_proximo = prox_char(input);
+        //ungetc(ch_proximo, input); // coloca o caractere de volta no stream
         if (ch == '<' && ch_proximo == '=') {
             lexema[0] = '<';
             lexema[1] = '=' ;
@@ -313,20 +294,28 @@ int analex(FILE *input, char *lexema) {
         if(ch == '('){
             lexema[0] = '(';
             lexema[1] = '\0';
+            prox_char(input);
             return OPEN_PAREN;
         }else if(ch_proximo == ')'){
             lexema[0] = ')';
             lexema[1] = '\0';
+            prox_char(input);
             return CLOSE_PAREN;   
         }
 
-        
+        lexema[0] = ch;
+        lexema[1]='\0';
+
 
         return ch;
 
     }
 
-    // caracteres especiais
+
+}
+
+int reconheceCaracteresEspeciais(char ch, FILE *input, char *lexema){
+
     if (strchr(", ; () [] {} + - * / %  & | ~", ch)) {
         //ch_proximo = prox_char(input);
         //ungetc(ch_proximo, input);
@@ -367,7 +356,10 @@ int analex(FILE *input, char *lexema) {
         return ch;
     }
 
-    // Reconhecendo literais
+}
+
+int reconheceLiterais(char ch, FILE *input, char *lexema){
+    int idx = 0;
     if (isdigit(ch)) {
         while (isdigit(ch)) {
             lexema[idx++] = ch;
@@ -412,14 +404,40 @@ int analex(FILE *input, char *lexema) {
         return LIT_STRING;
     }
 
+    return ch;
+}
 
+// int ignorandoComentarios(char ch, FILE *input, char *lexema){
 
-    // Ignorando comentário
+//     char ch_proximo = prox_char(input);
+//     // Ignorando comentário
+//     if (ch == '\\' && ch_proximo == '\\') {
+//         while (ch != '\n') {
+//             ch = prox_char(input);
+//         }
+//         return analex(input, lexema); // continue a análise sem retornar um token
+//     }
+
+//     if (ch == '\\' && ch_proximo == '*') {
+//         ch = prox_char(input); // avance para o próximo caractere
+//         ch_proximo = prox_char(input);
+//         while (!(ch == '*' && ch_proximo == '\\')) {
+//             ch = prox_char(input);
+//             ch_proximo = prox_char(input); 
+//         }
+//         prox_char(input); 
+//         return analex(input, lexema); 
+//     }
+// }
+int ignorandoComentarios(char ch, FILE *input) {
+    char ch_proximo = prox_char(input);
+    ungetc(ch_proximo, input); // Devolve o caractere para não consumir o próximo caractere
+
     if (ch == '\\' && ch_proximo == '\\') {
         while (ch != '\n') {
             ch = prox_char(input);
         }
-        return analex(input, lexema); // continue a análise sem retornar um token
+        return 1; // Indica que um comentário foi detectado
     }
 
     if (ch == '\\' && ch_proximo == '*') {
@@ -430,7 +448,45 @@ int analex(FILE *input, char *lexema) {
             ch_proximo = prox_char(input); 
         }
         prox_char(input); 
-        return analex(input, lexema); 
+        return 1; // Indica que um comentário foi detectado
+    }
+
+    return 0; // Nenhum comentário foi detectado
+}
+
+int analex(FILE *input, char *lexema) {
+
+    char ch = prox_char(input);
+    printf(" \n--------------\n");
+    int idx = 0;
+    //printf("Valor do caractere analex: %c\n", ch);
+
+    while (isspace(ch)) {
+        ch = prox_char(input);  
+    }
+
+    char ch_proximo = prox_char(input);
+    //printf("Valor do próximo caractere analex: %c \n", ch_proximo);
+    ungetc(ch_proximo, input);
+
+    if(isalpha(ch) || ch == '_'){
+        return reconheceIdentificadoresORReservadas(ch, input, lexema);
+    }
+
+    if(strchr("< > = ! ", ch)){
+        return reconheceOperadoresCompostos(ch , input, lexema );
+    }
+
+    if(strchr(", ; () [] {} + - * / %  & | ~", ch)){
+        return reconheceCaracteresEspeciais(ch, input, lexema);
+    }
+    int token = reconheceLiterais(ch, input, lexema);
+    if (token != ch) { 
+        return token;
+    }
+
+    if (ignorandoComentarios(ch, input)) {
+        return analex(input, lexema); // Se detectou um comentário, continue a análise sem retornar um token
     }
 
     if (ch == EOF) {
@@ -451,9 +507,9 @@ int analex(FILE *input, char *lexema) {
 
 int main(int argc, char *argv[]) {
 
-
+    initSimboloTabela();
     FILE *input = fopen(argv[1], "r");;
-    FILE *output = fopen("output19.txt", "w");
+    FILE *output = fopen("output24.txt", "w");
 
     if (input == NULL) {
         perror("Erro ao abrir o arquivo");

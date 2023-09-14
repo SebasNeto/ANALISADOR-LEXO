@@ -1,0 +1,31 @@
+LIT_CHAR        char
+TK_IDENTIFIER   c
+OPERATOR_ATRIB  =
+LIT_STRING      a
+KW_INT          int
+TK_IDENTIFIER   number
+OPERATOR_ATRIB  =
+LIT_INT         123
+KW_REAL         real
+TK_IDENTIFIER   decimal
+OPERATOR_ATRIB  =
+LIT_REAL        12.34
+KW_BOOL         bool
+TK_IDENTIFIER   isTrue
+OPERATOR_ATRIB  =
+TK_BOOL_TRUE    true
+KW_IF           if
+UNKNOWN_TOKEN   (
+TK_IDENTIFIER   number
+OPERATOR_GT     >
+LIT_INT         10
+OPEN_BRACE      {
+KW_OUTPUT       output
+LIT_STRING      Number is greater than 10!
+CLOSE_BRACE     }
+KW_ELSE         else
+OPEN_BRACE      {
+KW_OUTPUT       output
+LIT_STRING      Number is not greater than 10!
+CLOSE_BRACE     }
+TOKEN_EOF       

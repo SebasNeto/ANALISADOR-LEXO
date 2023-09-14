@@ -7,4 +7,5 @@ if (number > 10){
 } else {
     output "Number is not greater than 10!";
 }
-
+\\Isto é um comentário de uma linha\\
+\\*Isto é um comentáriode múltiplas linhas*\\
