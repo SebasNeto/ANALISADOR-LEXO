@@ -467,8 +467,7 @@ int main(int argc, char *argv[]) {
     // }
 
     int token;
-    
-    
+
     do {
         char lexema[256];
         token = analex(input, lexema);
