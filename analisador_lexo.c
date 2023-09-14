@@ -87,23 +87,29 @@ char prox_char(FILE *file) {
 
     if(ch == EOF){
         return ch;
+    }else if(ch == '\n'){
+        linhaCorrente ++;
     }
 
-    if (ch == '\r') {
-        ch = fgetc(file);
-        if (ch != '\n') {
-            fprintf(stderr, "Erro: encontrado '\r' sem '\n' em seguida na linha %d.\n", linhaCorrente);
-        }
-    }
+    
 
-    if (ch == '\n') {
-        linhaCorrente++;
-    }
+    // if (ch == '\r') {
+    //     ch = fgetc(file);
+    //     if (ch != '\n') {
+    //         fprintf(stderr, "Erro: encontrado '\r' sem '\n' em seguida na linha %d.\n", linhaCorrente);
+    //     }
+    // }
 
-    printf("Linha atual: %d - Caractere atual %c \n\n", linhaCorrente, ch);
-    //printf("Caractere atual: %c \n", ch);
+    // if (ch == '\n') {
+    //     linhaCorrente++;
+    // }
+
+    //printf("Linha atual: %d \n", linhaCorrente);
+    //printf("Caractere atual prox_char: %c \n", ch);
 
     return ch;
+
+    
 }
 
 
@@ -169,28 +175,31 @@ void erro(char *message) {
 }
 
 
+
 int analex(FILE *input, char *lexema) {
 
     char ch = prox_char(input);
+    
+
     printf(" \n--------------\n");
-	printf("Entrou antes do ispace\n");
-    char ch_proximo;
+
+    //char ch_proximo;
     int idx = 0;
     
     //ungetc(ch, input);
-    printf("Valor do caractere: %c\n", ch);
+    printf("Valor do caractere analex: %c\n", ch);
 
     while (isspace(ch)) {
         ch = prox_char(input);  
     }
 
     //char ch_proximo = fgetc(input); 
-    ch_proximo = prox_char(input);
+    char ch_proximo = prox_char(input);
+    printf("Valor do próximo caractere analex: %c \n", ch_proximo);
     ungetc(ch_proximo, input);
-
-    printf("pegou o proximo %c\n", ch_proximo);
-
-    printf("Valor dos lexemas: |%s| \n", lexema); 
+    //printf("o proximo foi colocado no buffer: %c \n", ch_proximo);
+  
+    //printf("Valor dos lexemas: |%s| \n", lexema); 
 
     
 
@@ -201,17 +210,20 @@ int analex(FILE *input, char *lexema) {
             lexema[idx++] = ch;
             ch = prox_char(input);
         }
+
+        //ungetc(ch, input); // Devolve o último caractere não utilizado para o buffer
         lexema[idx] = '\0';
-        //ungetc(ch, input);
+        
         
 
         // Verifique as palavras reservadas
         if (strcmp(lexema, "char") == 0){
-            lexema[0] = 'c';
-            lexema[1] = 'h';
-            lexema[2] = 'a';
-            lexema[3] = 'r';
-            lexema[4] = '\0';
+            
+            // lexema[0] = 'c';
+            // lexema[1] = 'h';
+            // lexema[2] = 'a';
+            // lexema[3] = 'r';
+            // lexema[4] = '\0';
             //prox_char(input);
             return LIT_CHAR;
             
@@ -227,7 +239,7 @@ int analex(FILE *input, char *lexema) {
         if (strcmp(lexema, "output") == 0) return KW_OUTPUT;
         if (strcmp(lexema, "return") == 0) return KW_RETURN;
         if (strcmp(lexema, "true") == 0){
-            ungetc(ch,input);
+            //ungetc(ch,input);
             
             // prox_char(input);
             // lexema[0] = 't';
@@ -296,9 +308,21 @@ int analex(FILE *input, char *lexema) {
             lexema[0] = '=';
             lexema[1] = '\0';
             return OPERATOR_ATRIB;
-        }else{
-            //return ch;
         }
+
+        if(ch == '('){
+            lexema[0] = '(';
+            lexema[1] = '\0';
+            return OPEN_PAREN;
+        }else if(ch_proximo == ')'){
+            lexema[0] = ')';
+            lexema[1] = '\0';
+            return CLOSE_PAREN;   
+        }
+
+        
+
+        return ch;
 
     }
 
@@ -310,15 +334,31 @@ int analex(FILE *input, char *lexema) {
         if(ch == ';'){
             lexema[0] = ';';
             lexema[1] = '\0';
-            prox_char(input);
             return SG_SEMICOLON;
+        }
+
+        // if(ch == '('){
+        //     lexema[0] = '(';
+        //     //lexema[1] = '\0';
+        //     return OPEN_PAREN;
+        // }else if(ch == ')'){
+        //     lexema[0] = ')';
+        //     lexema[1] = '\0';
+        //     return CLOSE_PAREN;   
+        // }
+    
+        if(ch == '{'){
+            lexema[0] = '{';
+            lexema[1] = '\0';
+            return OPEN_BRACE;   
+        }else if(ch == '}'){
+            lexema[0] = '}';
+            lexema[1] = '\0';
+            return CLOSE_BRACE;  
         }
 
         lexema[0] = ch;
         lexema[1]='\0';
-
-
-
 
 
         //ch_proximo = prox_char(input);
@@ -344,6 +384,7 @@ int analex(FILE *input, char *lexema) {
             return LIT_REAL;
         }
         lexema[idx] = '\0';
+
         return LIT_INT;
     }
 
@@ -360,16 +401,18 @@ int analex(FILE *input, char *lexema) {
     if (ch == '\"') {
         ch = prox_char(input);
         while (ch != '\"') {
-            lexema[idx++] = ch;
-            ch = prox_char(input);
+           lexema[idx++] = ch;
+           ch = prox_char(input);
         }
         ch = prox_char(input);
         lexema[idx] = '\0';
         
         
-        ///ungetc(ch, input);
+       ///ungetc(ch, input);
         return LIT_STRING;
     }
+
+
 
     // Ignorando comentário
     if (ch == '\\' && ch_proximo == '\\') {
@@ -402,13 +445,15 @@ int analex(FILE *input, char *lexema) {
     return TOKEN_ERROR; // Token de erro
 }
 
+
+
 ///////////////////////////////////// MAIN ////////////////////////////////////////////////////////
 
 int main(int argc, char *argv[]) {
 
 
     FILE *input = fopen(argv[1], "r");;
-    FILE *output = fopen("output15.txt", "w");
+    FILE *output = fopen("output19.txt", "w");
 
     if (input == NULL) {
         perror("Erro ao abrir o arquivo");

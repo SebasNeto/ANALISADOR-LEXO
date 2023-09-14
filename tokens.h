@@ -43,9 +43,9 @@
 #define TK_IDENTIFIER     280
 
 //tipos de literais do analisador 
-#define LIT_INT           281 // "10", "1"
-#define LIT_REAL          282 // "2.0"
-#define LIT_CHAR          285 // 'a', 'X'
+#define LIT_INT           281 // int 10, 1
+#define LIT_REAL          282 // real" 2.0
+#define LIT_CHAR          285 // 'char 'X'
 #define LIT_STRING        286 // "nome", "mensagem"
 
 //tipos de simbolos do analisador 

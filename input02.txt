@@ -2,3 +2,9 @@ char c = "a";
 int number = 123;
 real decimal = 12.34;
 bool isTrue = true;
+if (number > 10){
+    output "Number is greater than 10!";
+} else {
+    output "Number is not greater than 10!";
+}
+

@@ -74,6 +74,12 @@ Symbol* insert(char *lexema, int token) { //lexema (inserir) -> token (associado
     simboloTabela[index] = novoNo; // Insere no início da lista para lidar com colisões
     return novoNo;
 }
+
+void iniciarSimboloTabela(){
+    for (int i=0 ;i<HASH_SIZE;++i){
+        simboloTabela[i]=NULL;
+    }
+}
 ///////////////////////////////////////////////////////////////////////////q
 
 int getLineNumber(void) {
@@ -154,6 +160,87 @@ void erro(char *message) {
     exit(1);
 }
 
+// int palavrasReservadasOrIdentificadores(char ch, FILE *input, char *lexema){
+
+//     int idx = 0;
+
+
+//     while (isalpha(ch) || ch == '_') {
+//         lexema[idx++] = ch;
+//         ch = prox_char(input);
+//     }
+
+//     lexema[idx] = '\0';
+
+//     // Verifique as palavras reservadas
+//     if (strcmp(lexema, "char") == 0) return KW_CHAR;
+//     if (strcmp(lexema, "int") == 0) return KW_INT;
+//     if (strcmp(lexema, "real") == 0) return KW_REAL;
+//     if (strcmp(lexema, "bool") == 0) return KW_BOOL;
+//     if (strcmp(lexema, "if") == 0) return KW_IF;
+//     if (strcmp(lexema, "then") == 0) return KW_THEN;
+//     if (strcmp(lexema, "else") == 0) return KW_ELSE;
+//     if (strcmp(lexema, "loop") == 0) return KW_LOOP;
+//     if (strcmp(lexema, "input") == 0) return KW_INPUT;
+//     if (strcmp(lexema, "output") == 0) return KW_OUTPUT;
+//     if (strcmp(lexema, "return") == 0) return KW_RETURN;
+//     if (strcmp(lexema, "true") == 0) return TK_BOOL_TRUE; 
+//     if (strcmp(lexema, "false") == 0) return TK_BOOL_FALSE;
+
+//     // Se não for uma palavra reservada, é um identificador
+//     Symbol* s = pesquisaLexema(lexema);
+//     if (!s) {
+//         s = insert(lexema, TK_IDENTIFIER);
+//     }
+//     return s->token;
+
+// }
+
+// int reconhecerLiterais(char ch, FILE *input, char *lexema){
+
+//     int idx = 0;
+
+//     if (isdigit(ch)) {
+//         while (isdigit(ch)) {
+//             lexema[idx++] = ch;
+//             ch = prox_char(input);
+//         }
+        
+//         if (ch == '.') {
+//             lexema[idx++] = ch;
+//             ch = prox_char(input);
+//             while (isdigit(ch)) {
+//                 lexema[idx++] = ch;
+//                 ch = prox_char(input);
+//             }
+//             lexema[idx] = '\0';
+//             return LIT_REAL;
+//         }
+//         lexema[idx] = '\0';
+//         return LIT_INT;
+//     }
+
+//     if (ch == '\'') {
+//         ch = prox_char(input);
+//         lexema[idx++] = ch;
+//         lexema[idx] = '\0';
+//         ch = prox_char(input); // pegue o apóstrofo de fechamento
+//         return LIT_CHAR;
+//     }
+
+//     if (ch == '\"') {
+//         ch = prox_char(input);
+//         while (ch != '\"') {
+//             lexema[idx++] = ch;
+//             ch = prox_char(input);
+//         }
+//         lexema[idx] = '\0';
+//         return LIT_STRING;
+//     }
+
+//     return TOKEN_ERROR;
+
+// }
 
 int analex(FILE *input, char *lexema) {
     char ch = prox_char(input);
