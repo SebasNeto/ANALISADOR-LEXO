@@ -325,7 +325,6 @@ int analex(FILE *input, char *lexema) {
     }
 
     // Reconhecendo literais
-
     if (isdigit(ch)) {
         while (isdigit(ch)) {
             lexema[idx++] = ch;

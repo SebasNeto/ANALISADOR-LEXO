@@ -113,8 +113,8 @@ char prox_char(FILE *file) {
     //     linhaCorrente++;
     // }
 
-    //printf("Linha atual: %d \n", linhaCorrente);
-    //printf("Caractere atual prox_char: %c \n", ch);
+    printf("Linha atual: %d \n", linhaCorrente);
+    printf("Caractere atual prox_char: %c \n", ch);
 
     return ch;
 
@@ -134,12 +134,11 @@ char prox_char(FILE *file) {
 const char* token_to_string(int token) {
     switch (token) {
 
-        case TK_IDENTIFIER: return "TK_IDENTIFIER";
-        case OPERATOR_ATRIB: return "OPERATOR_ATRIB";
         case KW_CHAR: return "KW_CHAR";
         case KW_INT: return "KW_INT";
         case KW_REAL: return "KW_REAL";
         case KW_BOOL: return "KW_BOOL";
+
         case KW_IF: return "KW_IF";
         case KW_THEN: return "KW_THEN";
         case KW_ELSE: return "KW_ELSE";
@@ -147,24 +146,36 @@ const char* token_to_string(int token) {
         case KW_INPUT: return "KW_INPUT";
         case KW_OUTPUT: return "KW_OUTPUT";
         case KW_RETURN: return "KW_RETURN";
+
         case OPERATOR_LE: return "OPERATOR_LE";
         case OPERATOR_GE: return "OPERATOR_GE";
         case OPERATOR_EQ: return "OPERATOR_EQ";
         case OPERATOR_DIF: return "OPERATOR_DIF";
+
+        case OPERATOR_ATRIB: return "OPERATOR_ATRIB";
+        case OPERATOR_GT: return "OPERATOR_GT";
+        case OPERATOR_LT: return "OPERATOR_LT";
+
+        case TK_BOOL_TRUE: return "TK_BOOL_TRUE";
+        case TK_BOOL_FALSE: return "TK_BOOL_FALSE";
+
+        case TK_IDENTIFIER: return "TK_IDENTIFIER";
+
+
         case LIT_INT: return "LIT_INT";
         case LIT_REAL: return "LIT_REAL";
         case LIT_CHAR: return "LIT_CHAR";
         case LIT_STRING: return "LIT_STRING";
+
+
         case SG_SEMICOLON: return "SG_SEMICOLON";
-        case OPERATOR_GT: return "OPERATOR_GT";
-        case OPERATOR_LT: return "OPERATOR_LT";
-        case TK_BOOL_TRUE: return "TK_BOOL_TRUE";
-        case TK_BOOL_FALSE: return "TK_BOOL_FALSE";
-        case TOKEN_ERROR: return "TOKEN_ERROR";
         case OPEN_PAREN: return "OPEN_PAREN";
         case CLOSE_PAREN: return "CLOSE_PAREN";
         case OPEN_BRACE : return "OPEN_BRACE";
         case CLOSE_BRACE : return "CLOSE_BRACE";
+
+        case TOKEN_ERROR: return "TOKEN_ERROR";
+
         case TOKEN_EOF : return "TOKEN_EOF";
         
 
@@ -250,32 +261,32 @@ int reconheceIdentificadoresORReservadas(char ch, FILE *input, char *lexema){
 int reconheceOperadoresCompostos(char ch, FILE *input, char *lexema){
     int idx = 0;
     char ch_proximo = prox_char(input);
-    if (strchr("< > = !  ; ", ch)) {
+    if (strchr("< > = ! ", ch)) {
         //ch_proximo = prox_char(input);
         //ungetc(ch_proximo, input); // coloca o caractere de volta no stream
         if (ch == '<' && ch_proximo == '=') {
             lexema[0] = '<';
             lexema[1] = '=' ;
             lexema[2] = '\0';
-            prox_char(input);
+            //prox_char(input);
             return OPERATOR_LE;
         } else if (ch == '>' && ch_proximo == '=') {
             lexema[0] = '>';
             lexema[1] = '=' ;
             lexema[2] = '\0';
-            prox_char(input);
+            //prox_char(input);
             return OPERATOR_GE;
         } else if (ch == '=' && ch_proximo == '=') {
             lexema[0] = '=';
             lexema[1] = '=';
             lexema[2] = '\0';
-            prox_char(input);
+            //prox_char(input);
             return OPERATOR_EQ;
         } else if (ch == '!' && ch_proximo == '=') {
             lexema[0] = '!';
             lexema[1] = '=';
             lexema[2] = '\0';
-            prox_char(input);
+            //prox_char(input);
             return OPERATOR_DIF;
         }else if (ch == '>'){
             lexema[0] = '>';
@@ -290,19 +301,7 @@ int reconheceOperadoresCompostos(char ch, FILE *input, char *lexema){
             lexema[1] = '\0';
             return OPERATOR_ATRIB;
         }
-
-        if(ch == '('){
-            lexema[0] = '(';
-            lexema[1] = '\0';
-            prox_char(input);
-            return OPEN_PAREN;
-        }else if(ch_proximo == ')'){
-            lexema[0] = ')';
-            lexema[1] = '\0';
-            prox_char(input);
-            return CLOSE_PAREN;   
-        }
-
+        
         lexema[0] = ch;
         lexema[1]='\0';
 
@@ -316,7 +315,8 @@ int reconheceOperadoresCompostos(char ch, FILE *input, char *lexema){
 
 int reconheceCaracteresEspeciais(char ch, FILE *input, char *lexema){
 
-    if (strchr(", ; () [] {} + - * / %  & | ~", ch)) {
+    
+    if (strchr(", ; () []  {} + - * / %  & | ~", ch)) {
         //ch_proximo = prox_char(input);
         //ungetc(ch_proximo, input);
 
@@ -324,6 +324,18 @@ int reconheceCaracteresEspeciais(char ch, FILE *input, char *lexema){
             lexema[0] = ';';
             lexema[1] = '\0';
             return SG_SEMICOLON;
+        }
+        
+
+        if(ch == '('){
+            lexema[0] = '(';
+            lexema[1] = '\0';
+            return OPEN_PAREN;
+        }else if(ch == ')'){
+
+            lexema[0] = ')';
+            lexema[1] = '\0';
+            return CLOSE_PAREN;   
         }
 
         // if(ch == '('){
@@ -335,7 +347,7 @@ int reconheceCaracteresEspeciais(char ch, FILE *input, char *lexema){
         //     lexema[1] = '\0';
         //     return CLOSE_PAREN;   
         // }
-    
+
         if(ch == '{'){
             lexema[0] = '{';
             lexema[1] = '\0';
@@ -345,6 +357,8 @@ int reconheceCaracteresEspeciais(char ch, FILE *input, char *lexema){
             lexema[1] = '\0';
             return CLOSE_BRACE;  
         }
+    
+
 
         lexema[0] = ch;
         lexema[1]='\0';
@@ -360,11 +374,14 @@ int reconheceCaracteresEspeciais(char ch, FILE *input, char *lexema){
 
 int reconheceLiterais(char ch, FILE *input, char *lexema){
     int idx = 0;
+    
     if (isdigit(ch)) {
+        
         while (isdigit(ch)) {
             lexema[idx++] = ch;
             ch = prox_char(input);
         }
+
         if (ch == '.') {
             lexema[idx++] = ch;
             ch = prox_char(input);
@@ -375,8 +392,9 @@ int reconheceLiterais(char ch, FILE *input, char *lexema){
             lexema[idx] = '\0';
             return LIT_REAL;
         }
-        lexema[idx] = '\0';
 
+        lexema[idx] = '\0';
+        ungetc(ch, input);
         return LIT_INT;
     }
 
@@ -398,12 +416,12 @@ int reconheceLiterais(char ch, FILE *input, char *lexema){
         }
         ch = prox_char(input);
         lexema[idx] = '\0';
-        
-        
        ///ungetc(ch, input);
         return LIT_STRING;
     }
 
+    lexema[0] = ch;
+    lexema[1] = '\0';
     return ch;
 }
 
@@ -465,9 +483,9 @@ int analex(FILE *input, char *lexema) {
         ch = prox_char(input);  
     }
 
-    char ch_proximo = prox_char(input);
+    //char ch_proximo = prox_char(input);
     //printf("Valor do próximo caractere analex: %c \n", ch_proximo);
-    ungetc(ch_proximo, input);
+    //ungetc(ch_proximo, input);
 
     if(isalpha(ch) || ch == '_'){
         return reconheceIdentificadoresORReservadas(ch, input, lexema);
@@ -509,7 +527,7 @@ int main(int argc, char *argv[]) {
 
     initSimboloTabela();
     FILE *input = fopen(argv[1], "r");;
-    FILE *output = fopen("output24.txt", "w");
+    FILE *output = fopen("output27.txt", "w");
 
     if (input == NULL) {
         perror("Erro ao abrir o arquivo");
