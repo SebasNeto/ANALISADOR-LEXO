@@ -231,7 +231,7 @@ int reconheceIdentificadoresORReservadas(char ch, FILE *input, char *lexema){
         if (strcmp(lexema, "output") == 0) return KW_OUTPUT;
         if (strcmp(lexema, "return") == 0) return KW_RETURN;
         if (strcmp(lexema, "true") == 0){
-            //ungetc(ch,input);
+            ungetc(ch,input);
             
             // prox_char(input);
             // lexema[0] = 't';
@@ -243,7 +243,7 @@ int reconheceIdentificadoresORReservadas(char ch, FILE *input, char *lexema){
             return TK_BOOL_TRUE;
         } 
         if (strcmp(lexema, "false") == 0){
-            //ungetc(ch,input);
+            ungetc(ch,input);
             //prox_char(input);
             return TK_BOOL_FALSE;
         }
@@ -323,6 +323,7 @@ int reconheceCaracteresEspeciais(char ch, FILE *input, char *lexema){
         if(ch == ';'){
             lexema[0] = ';';
             lexema[1] = '\0';
+            
             return SG_SEMICOLON;
         }
         
@@ -390,6 +391,7 @@ int reconheceLiterais(char ch, FILE *input, char *lexema){
                 ch = prox_char(input);
             }
             lexema[idx] = '\0';
+            ungetc(ch, input);
             return LIT_REAL;
         }
 
@@ -416,7 +418,7 @@ int reconheceLiterais(char ch, FILE *input, char *lexema){
         }
         ch = prox_char(input);
         lexema[idx] = '\0';
-       ///ungetc(ch, input);
+        ungetc(ch, input);
         return LIT_STRING;
     }
 
@@ -527,7 +529,7 @@ int main(int argc, char *argv[]) {
 
     initSimboloTabela();
     FILE *input = fopen(argv[1], "r");;
-    FILE *output = fopen("output27.txt", "w");
+    FILE *output = fopen("output29.txt", "w");
 
     if (input == NULL) {
         perror("Erro ao abrir o arquivo");
