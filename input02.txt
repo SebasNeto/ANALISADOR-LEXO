@@ -1,5 +1,4 @@
 char c = "a";
-int = 10;
 int number = 123;
 real decimal = 12.34;
 bool isTrue = true;
@@ -10,3 +9,4 @@ if (number > 10){
 }
 \\Isto é um comentário de uma linha\\
 \\*Isto é um comentáriode múltiplas linhas*\\
+
