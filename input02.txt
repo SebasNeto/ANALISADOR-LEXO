@@ -1,4 +1,5 @@
 char c = "a";
+int = 10;
 int number = 123;
 real decimal = 12.34;
 bool isTrue = true;

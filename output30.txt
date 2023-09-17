@@ -3,20 +3,14 @@ TK_IDENTIFIER   c
 OPERATOR_ATRIB  =
 LIT_STRING      a
 SG_SEMICOLON    ;
-LIT_CHAR        char
-TK_IDENTIFIER   s
-OPEN_COLCH      [
-LIT_INT         1
-CLOSE_COLCH     ]
+KW_INT          int
 OPERATOR_ATRIB  =
-OPEN_BRACE      {
-LIT_STRING      s
-CLOSE_BRACE     }
+UNKNOWN_TOKEN   10
 SG_SEMICOLON    ;
 KW_INT          int
 TK_IDENTIFIER   number
 OPERATOR_ATRIB  =
-LIT_INT         123
+UNKNOWN_TOKEN   123
 SG_SEMICOLON    ;
 KW_REAL         real
 TK_IDENTIFIER   decimal
@@ -33,7 +27,7 @@ KW_IF           if
 OPEN_PAREN      (
 TK_IDENTIFIER   number
 OPERATOR_GT     >
-LIT_INT         10
+UNKNOWN_TOKEN   10
 CLOSE_PAREN     )
 OPEN_BRACE      {
 KW_OUTPUT       output
@@ -47,3 +41,4 @@ LIT_STRING      Number is not greater than 10!
 SG_SEMICOLON    ;
 CLOSE_BRACE     }
 TOKEN_EOF       
+Erro na linha 13: Token não reconhecido

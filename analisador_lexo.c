@@ -17,16 +17,12 @@
 #include <unistd.h>
 #include "stdbool.h"
 
-///////////////////////////////////// DEFINIÇÕES TOKENS ///////////////////////////////////////////
-
-
 ////////////////////////////////////// VARIAVEIS GLOBAIS //////////////////////////////////////
-
-
 #define HASH_SIZE 997 
 
 int linhaCorrente = 1; //rastrear linha atual
 int running = 1; // Variável global para rastrear se a análise está em execução
+
 ///////////////////////////////////// ESTRUTURA TABELA DE SIMBOLOS /////////////////////////////////
 
 typedef struct Symbol {
@@ -73,8 +69,26 @@ Symbol* insert(char *lexeme, int token) {
 void initSimboloTabela() {
     for (int i = 0; i < HASH_SIZE; i++) {
         simboloTabela[i] = NULL;
+        
     }
 }
+
+void printSimboloTabela() {
+    printf("\nTabela de Símbolos:\n");
+    for (int i = 0; i < HASH_SIZE; i++) {
+        if (simboloTabela[i] != NULL) {
+            Symbol *atual = simboloTabela[i];
+            while (atual) {
+                printf("Posição %d: Lexema = %s, Token = %d\n", i, atual->lexeme, atual->token);
+                atual = atual->proximo;
+            }
+        }
+    }
+    printf("\nFim da Tabela de Símbolos\n");
+}
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////q
 
@@ -113,8 +127,8 @@ char prox_char(FILE *file) {
     //     linhaCorrente++;
     // }
 
-    printf("Linha atual: %d \n", linhaCorrente);
-    printf("Caractere atual prox_char: %c \n", ch);
+    //printf("Linha atual: %d \n", linhaCorrente);
+    //printf("Caractere atual prox_char: %c \n", ch);
 
     return ch;
 
@@ -130,6 +144,8 @@ char prox_char(FILE *file) {
 //     fprintf(output, "Erro na linha %d: %s\n", linhaCorrente, message);
 //     exit(1);
 // }
+
+
 
 const char* token_to_string(int token) {
     switch (token) {
@@ -162,7 +178,7 @@ const char* token_to_string(int token) {
         case TK_IDENTIFIER: return "TK_IDENTIFIER";
 
 
-        case LIT_INT: return "LIT_INT";
+        //case LIT_INT: return "LIT_INT";
         case LIT_REAL: return "LIT_REAL";
         case LIT_CHAR: return "LIT_CHAR";
         case LIT_STRING: return "LIT_STRING";
@@ -173,6 +189,19 @@ const char* token_to_string(int token) {
         case CLOSE_PAREN: return "CLOSE_PAREN";
         case OPEN_BRACE : return "OPEN_BRACE";
         case CLOSE_BRACE : return "CLOSE_BRACE";
+
+        case OPEN_COLCH : return "OPEN_COLCH";
+        case CLOSE_COLCH : return "CLOSE_COLCH";
+        case OPERADOR_SUM :  return "OPERADOR_SUM";
+        case OPERADOR_SUB :  return "OPERADOR_SUB";
+        case OPERADOR_ASTE : return "OPERADOR_ASTE";
+        case OPERADOR_VIR : return "OPERADOR_VIR";
+        case OPERADOR_BARRA : return "OPERADOR_BARRA";
+        case OPERADOR_DIV : return "OPERADOR_DIV";
+        case OPERADOR_ECOMERCIAL : return "OPERADOR_ECOMERCIAL";
+        case OPERADOR_BARRAVERTICAL : return "OPERADOR_BARRAVERTICAL";
+        case OPERADOR_NEG : return "OPERADOR_NEG";
+        case OPERATOR_EXCLAMARK: return "OPERATOR_EXCLAMARK";
 
         case TOKEN_ERROR: return "TOKEN_ERROR";
 
@@ -189,10 +218,6 @@ void grava_token(int token, char *lexema, FILE *output) {
     fprintf(output, "%-15s %s\n", token_to_string(token), lexema);
 }
 
-void erro(char *message) {
-    fprintf(stderr, "Erro na linha %d: %s\n", linhaCorrente, message);
-    exit(1);
-}
 
 int reconheceIdentificadoresORReservadas(char ch, FILE *input, char *lexema){
 
@@ -203,7 +228,7 @@ int reconheceIdentificadoresORReservadas(char ch, FILE *input, char *lexema){
             ch = prox_char(input);
         }
 
-        //ungetc(ch, input); // Devolve o último caractere não utilizado para o buffer
+        ungetc(ch, input); // Devolve o último caractere não utilizado para o buffer
         lexema[idx] = '\0';
         
         
@@ -300,6 +325,10 @@ int reconheceOperadoresCompostos(char ch, FILE *input, char *lexema){
             lexema[0] = '=';
             lexema[1] = '\0';
             return OPERATOR_ATRIB;
+        }else if(ch == '!'){
+            lexema[0] = '!';
+            lexema[1] = '\0';
+            return OPERATOR_EXCLAMARK;
         }
         
         lexema[0] = ch;
@@ -323,12 +352,44 @@ int reconheceCaracteresEspeciais(char ch, FILE *input, char *lexema){
         if(ch == ';'){
             lexema[0] = ';';
             lexema[1] = '\0';
-            
             return SG_SEMICOLON;
-        }
-        
-
-        if(ch == '('){
+        }else if(ch == ','){
+            lexema[0] = ',';
+            lexema[1] = '\0';
+            return OPERADOR_VIR;
+        }else if(ch == '+'){
+            lexema[0] = '+';
+            lexema[1] = '\0';
+            return OPERADOR_SUM;
+        }else if(ch == '-'){
+            lexema[0] = '-';
+            lexema[1] = '\0';
+            return OPERADOR_SUB;
+        }else if(ch == '*'){
+            lexema[0] = '*';
+            lexema[1] = '\0';
+            return OPERADOR_ASTE;
+        }else if(ch == '/'){
+            lexema[0] = '/';
+            lexema[1] = '\0';
+            return OPERADOR_BARRA;
+        }else if(ch == '%'){
+            lexema[0] = '%';
+            lexema[1] = '\0';
+            return OPERADOR_DIV;
+        }else if(ch == '&'){
+            lexema[0] = '&';
+            lexema[1] = '\0';
+            return OPERADOR_ECOMERCIAL;
+        }else if(ch == '|'){
+            lexema[0] = '|';
+            lexema[1] = '\0';
+            return OPERADOR_BARRAVERTICAL;
+        }else if(ch == '~'){
+            lexema[0] = '~';
+            lexema[1] = '\0';
+            return OPERADOR_NEG;
+        }else if(ch == '('){
             lexema[0] = '(';
             lexema[1] = '\0';
             return OPEN_PAREN;
@@ -337,19 +398,7 @@ int reconheceCaracteresEspeciais(char ch, FILE *input, char *lexema){
             lexema[0] = ')';
             lexema[1] = '\0';
             return CLOSE_PAREN;   
-        }
-
-        // if(ch == '('){
-        //     lexema[0] = '(';
-        //     //lexema[1] = '\0';
-        //     return OPEN_PAREN;
-        // }else if(ch == ')'){
-        //     lexema[0] = ')';
-        //     lexema[1] = '\0';
-        //     return CLOSE_PAREN;   
-        // }
-
-        if(ch == '{'){
+        }else if(ch == '{'){
             lexema[0] = '{';
             lexema[1] = '\0';
             return OPEN_BRACE;   
@@ -357,6 +406,14 @@ int reconheceCaracteresEspeciais(char ch, FILE *input, char *lexema){
             lexema[0] = '}';
             lexema[1] = '\0';
             return CLOSE_BRACE;  
+        }else if(ch == '['){
+            lexema[0] = '[';
+            lexema[1] = '\0';
+            return OPEN_COLCH;   
+        }else if(ch == ']'){
+            lexema[0] = ']';
+            lexema[1] = '\0';
+            return CLOSE_COLCH;  
         }
     
 
@@ -375,7 +432,7 @@ int reconheceCaracteresEspeciais(char ch, FILE *input, char *lexema){
 
 int reconheceLiterais(char ch, FILE *input, char *lexema){
     int idx = 0;
-    
+    Symbol *s;
     if (isdigit(ch)) {
         
         while (isdigit(ch)) {
@@ -392,11 +449,17 @@ int reconheceLiterais(char ch, FILE *input, char *lexema){
             }
             lexema[idx] = '\0';
             ungetc(ch, input);
+            insert(lexema, LIT_REAL);
             return LIT_REAL;
         }
 
         lexema[idx] = '\0';
         ungetc(ch, input);
+        insert(lexema, LIT_INT);
+        // s = pesquisaLexema(lexema);
+        // if (!s) {
+        //     insert(lexema, LIT_INT);  // Inserir na tabela de símbolos se não existir
+        // }
         return LIT_INT;
     }
 
@@ -406,7 +469,8 @@ int reconheceLiterais(char ch, FILE *input, char *lexema){
         lexema[idx++] = ch;
         ch = prox_char(input); // pegue o apóstrofo de fechamento
         lexema[idx] = '\0';
-        ungetc(ch, input); 
+        ungetc(ch, input);
+        insert(lexema, LIT_CHAR);
         return LIT_CHAR;
     }
 
@@ -419,6 +483,7 @@ int reconheceLiterais(char ch, FILE *input, char *lexema){
         ch = prox_char(input);
         lexema[idx] = '\0';
         ungetc(ch, input);
+        insert(lexema, LIT_STRING);
         return LIT_STRING;
     }
 
@@ -474,7 +539,14 @@ int ignorandoComentarios(char ch, FILE *input) {
     return 0; // Nenhum comentário foi detectado
 }
 
-int analex(FILE *input, char *lexema) {
+void erro(char *message, FILE *output) {
+    fprintf(output, "Erro na linha %d: %s\n", getLineNumber(), message);
+    fclose(output);
+    exit(1);
+}
+
+
+int analex(FILE *input, char *lexema,FILE *output) {
 
     char ch = prox_char(input);
     printf(" \n--------------\n");
@@ -500,13 +572,17 @@ int analex(FILE *input, char *lexema) {
     if(strchr(", ; () [] {} + - * / %  & | ~", ch)){
         return reconheceCaracteresEspeciais(ch, input, lexema);
     }
+
+    
     int token = reconheceLiterais(ch, input, lexema);
     if (token != ch) { 
         return token;
     }
 
+    
+
     if (ignorandoComentarios(ch, input)) {
-        return analex(input, lexema); // Se detectou um comentário, continue a análise sem retornar um token
+        return analex(input, lexema, output); // Se detectou um comentário, continue a análise sem retornar um token
     }
 
     if (ch == EOF) {
@@ -515,10 +591,17 @@ int analex(FILE *input, char *lexema) {
         return TOKEN_EOF; 
     }
 
+    
+
     lexema[0] = ch;
     lexema[1] = '\0';
-    fprintf(stderr, "Erro na linha %d: Caractere não reconhecido: %c \n", linhaCorrente, ch);
-    return TOKEN_ERROR; // Token de erro
+
+    
+    if( ch == TOKEN_ERROR){
+        erro("Token não reconhecido", output);
+    }
+    //fprintf(stderr, "Erro na linha %d: Caractere não reconhecido: %c \n", linhaCorrente, ch);
+    //return TOKEN_ERROR; // Token de erro
 }
 
 
@@ -528,8 +611,10 @@ int analex(FILE *input, char *lexema) {
 int main(int argc, char *argv[]) {
 
     initSimboloTabela();
+    
+    
     FILE *input = fopen(argv[1], "r");;
-    FILE *output = fopen("output29.txt", "w");
+    FILE *output = fopen("output30.txt", "w");
 
     if (input == NULL) {
         perror("Erro ao abrir o arquivo");
@@ -542,21 +627,34 @@ int main(int argc, char *argv[]) {
     //     grava_token(token, lexema, output);
     // }
 
-    int token;
+    //int token;
 
-    do {
+    // do {
+    //     char lexema[256];
+    //     token = analex(input, lexema);
+    //     grava_token(token, lexema, output);
+    //     printf("Token: %d\n", token);
+    //     printf("Valor do lexema: %s\n", lexema);
+    //     //sleep(1);
+    // } while (token != TOKEN_EOF);
+
+    while (isRunning()) {
         char lexema[256];
-        token = analex(input, lexema);
+        int token = analex(input, lexema,output);
         grava_token(token, lexema, output);
         printf("Token: %d\n", token);
         printf("Valor do lexema: %s\n", lexema);
-        //sleep(1);
-    } while (token != TOKEN_EOF);
+    }
 
+    erro("Token não reconhecido", output);
+
+    printSimboloTabela();
+    
     printf(" \n\n CÓDIGO COMPILADO COM SUCESSO \n \n");
 
     fclose(input);
     fclose(output);
+    
     return 0;
 }
 

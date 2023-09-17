@@ -54,8 +54,21 @@
 #define CLOSE_PAREN       293 //)
 #define OPEN_BRACE        294 //{
 #define CLOSE_BRACE       295 //}
+#define OPEN_COLCH        296 //[
+#define CLOSE_COLCH       297 //]
+#define OPERADOR_SUM      298
+#define OPERADOR_SUB      299
+#define OPERADOR_ASTE     300
+#define OPERADOR_VIR      301
+#define OPERADOR_BARRA    302
+#define OPERADOR_DIV      303
+#define OPERADOR_ECOMERCIAL 304
+#define OPERADOR_BARRAVERTICAL  305
+#define OPERADOR_NEG      306
+#define OPERATOR_EXCLAMARK  307
 
-//token de erro
+
+
 #define TOKEN_ERROR       390
 
 //fim de arquivo
