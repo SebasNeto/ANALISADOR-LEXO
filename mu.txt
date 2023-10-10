@@ -1,0 +1,18 @@
+Manual do Usuário - Analisador Léxico C
+
+1. Formato de Entrada:
+- O analisador aceita testes no formato txt de um código em c.
+- Tal arquivo será analisado pela função analex.
+
+2. Utilizando o Analisador Léxico:
+- O analisador percorre um arquivo de entrada de um código em c.
+- No percurso ele analisa conteúdo por conteúdo, sendo eles separados por espaços, ; e etc, e os insere dentro da variável ch.
+- Depois, na função analex é chamado cada função que verifica que tipo de caractere o conteúdo é, sejam operadores compostos (reconheceOperadoresCompostos), identificadores (reconheceIdentificadoresORReservadas), etc.
+- Ele salva o número do token em uma tabela de símbolos.
+- O número do token é convertido para string na função token_to_string.
+- Dentro de token_to_string se o token não for reconhecido é atribuido ao token UNKNOWN_TOKEN.
+- Após todo o processo de análise o resultado é salvo dentro de um arquivo txt.
+
+3. Formato de Saída:
+- O resultado é armazenado em um txt chamado saida_tokens.
+- Também será gerado outro arquivo txt que armazenara a tabela de símbolos, chamado saida_tabela_simbolos.

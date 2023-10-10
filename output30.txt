@@ -1,52 +1,19 @@
-LIT_CHAR        char
-TK_IDENTIFIER   c
-OPERATOR_ATRIB  =
-LIT_STRING      a
-SG_SEMICOLON    ;
-KW_INT          int
-TK_IDENTIFIER   number
-OPERATOR_ATRIB  =
-LIT_INT         123
-SG_SEMICOLON    ;
-KW_REAL         real
-TK_IDENTIFIER   decimal
-OPERATOR_ATRIB  =
-LIT_REAL        12.34
-SG_SEMICOLON    ;
-KW_BOOL         bool
-TK_IDENTIFIER   isTrue
-OPERATOR_ATRIB  =
-TK_BOOL_TRUE    true
-SG_SEMICOLON    ;
-KW_IF           if
-OPEN_PAREN      (
-TK_IDENTIFIER   number
-OPERATOR_GT     >
-LIT_INT         10
-CLOSE_PAREN     )
-OPEN_BRACE      {
-KW_OUTPUT       output
-LIT_STRING      Number is greater than 10!
-SG_SEMICOLON    ;
-CLOSE_BRACE     }
-KW_ELSE         else
-OPEN_BRACE      {
-KW_OUTPUT       output
-LIT_STRING      Number is not greater than 10!
-SG_SEMICOLON    ;
-CLOSE_BRACE     }
+LIT_CHAR        a
+LIT_CHAR         
+LIT_CHAR        p
+TK_IDENTIFIER   alavra
+OPERADOR_ASTE   *
+LIT_CHAR        a
+LIT_INT         9
+LIT_REAL        987.5
 TOKEN_EOF       
 
 Tabela de Símbolos:
-Posição 97: Lexema = a, Token = 286
-Posição 99: Lexema = c, Token = 280
-Posição 258: Lexema = isTrue, Token = 280
-Posição 345: Lexema = decimal, Token = 280
-Posição 450: Lexema = Number is not greater than 10!, Token = 286
-Posição 451: Lexema = number, Token = 280
-Posição 570: Lexema = 10, Token = 281
-Posição 702: Lexema = 12.34, Token = 282
-Posição 834: Lexema = 123, Token = 281
-Posição 947: Lexema = Number is greater than 10!, Token = 286
+Posição 32: Lexema =  , Token = 285
+Posição 57: Lexema = 9, Token = 281
+Posição 97: Lexema = a, Token = 285
+Posição 112: Lexema = p, Token = 285
+Posição 905: Lexema = 987.5, Token = 282
+Posição 988: Lexema = alavra, Token = 280
 
 Fim da Tabela de Símbolos
