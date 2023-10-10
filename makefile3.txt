@@ -11,7 +11,7 @@ lex.yy.c: scanner.l
 	flex --header-file=lex.yy.h scanner.l 
 
 parser.tab.o: parser.tab.c
-	gcc -c parser.tab.c
+	gcc -c parser.tab.c'
 
 parser.tab.c: parser.y
 	bison -d parser.y
