@@ -1,0 +1,6 @@
+Starting parse
+Entering state 0
+Stack now 0
+Reading a token
+Next token is token ID ()
+Erro sintático na linha 3: syntax error

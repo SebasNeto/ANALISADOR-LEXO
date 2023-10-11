@@ -1,19 +1,32 @@
 %{
-#include "tokens.h"
+
 #include <stdio.h>
+#include <stdlib.h>
+
+#define YYSTYPE int
+
 extern int yylex();
 extern char* yytext;
-extern int getLineNumber();
+extern int yylineno;
+
+
+int getLineNumber(void);
 void yyerror(const char *s);
+
 %}
+
+%union {
+    int intValue;
+
+}
 
 %token <symbol> ID
 %token INT VOID FLOAT
 %token LIT_INT LIT_REAL
 %token NUM
 %token IF ELSE WHILE RETURN
-
 %token EQ LEQ LT GT GEQ NEQ PLUS MINUS TIMES DIV MOD
+%token KW_CHAR KW_INT KW_REAL LIT_CHAR
 
 %%
 
@@ -138,7 +151,34 @@ lista_arg: lista_arg ',' exp
 
 %%
 
+int getLineNumber(void) {
+    return yylineno;
+}
+
+
 void yyerror(const char *s) {
     fprintf(stderr, "Erro sintático na linha %d: %s\n", getLineNumber(), s);
     exit(3);
 }
+
+/////////////////////////////
+etapa1: lex.yy.o parser.tab.o main.o
+	gcc -o etapa1 lex.yy.o parser.tab.o main.o
+
+main.o: main.c
+	gcc -c main.c
+
+lex.yy.o: lex.yy.c
+	gcc -c lex.yy.c
+
+lex.yy.c: scanner.l
+	flex --header-file=lex.yy.h scanner.l 
+
+parser.tab.o: parser.tab.c
+	gcc -c parser.tab.c
+
+parser.tab.c: parser.y
+	bison -d parser.y
+
+clean:
+	rm *.o lex.yy.c etapa1 parser.tab.c parser.tab.h

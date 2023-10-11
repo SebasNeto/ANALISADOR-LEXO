@@ -1,1 +1,25 @@
-'a' 'palavra * a9 987.5
+//Exemplo de arquivo input.txt
+
+int variavel1;
+float variavel2;
+
+int minhaFuncao(int arg1, float arg2) {
+    int local1;
+    float local2;
+    local1 = arg1 + 10;
+    local2 = arg2 / 2.0;
+    return local1;
+}
+
+void outraFuncao() {
+    // Comentário de uma linha
+    if (variavel1 > 10) {
+        variavel1 = variavel1 - 1;
+    } else {
+        variavel1 = variavel1 + 1;
+    }
+    while (variavel1 < 100) {
+        variavel1 = variavel1 + 10;
+    }
+}
+

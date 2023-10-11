@@ -1,0 +1,19 @@
+int minhaVar = 123;
+void minhaFuncao() {
+    int funcaoVar = 456;
+    if (funcaoVar == 456) {
+        funcaoVar = funcaoVar + 1;
+    } else {
+        funcaoVar = funcaoVar - 1;
+    }
+}
+
+int outraFuncao(int parametro1) {
+    return parametro1 * 2;
+}
+
+int main() {
+    int resultado;
+    resultado = outraFuncao(10);
+    return 0;
+}
